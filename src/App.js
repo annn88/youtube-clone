@@ -6,7 +6,6 @@ import Feed from "./components/Feed";
 import VideoDetail from "./components/VideoDetail";
 import ChannelDetail from "./components/ChannelDetail";
 import SearchFeed from "./components/SearchFeed";
-import Footer from "./components/Footer";
 
 const App = () => {
   return (
