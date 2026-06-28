@@ -39,23 +39,23 @@ const Navbar = () => {
         }}
       >
         {/* Logo */}
-        <Link
-          to="/"
-          style={{
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              color: "#ff0000",
-              fontWeight: "bold",
-              letterSpacing: "1px",
-            }}
-          >
-            ▶ YouTube Clone
-          </Typography>
-        </Link>
+       <Link
+  to="/"
+  style={{
+    textDecoration: "none",
+  }}
+>
+  <Typography
+    variant="h5"
+    sx={{
+      fontWeight: "bold",
+      letterSpacing: "0.5px",
+    }}
+  >
+    <span style={{ color: "#ff0000" }}>▶ YouTube</span>{" "}
+    <span style={{ color: "#ffffff" }}>Clone</span>
+  </Typography>
+</Link>
 
         {/* Search Bar */}
         <Box

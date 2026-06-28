@@ -1,11 +1,20 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Box, Stack, Typography } from "@mui/material";
+
 import Sidebar from "./Sidebar";
 import VideoCard from "./VideoCard";
 import { videos } from "../utils/videos";
 
 const Feed = () => {
+  const { category } = useParams();
+
   const [allVideos] = useState(videos);
+
+  const filteredVideos =
+    category && category !== "Home"
+      ? allVideos.filter((video) => video.category === category)
+      : allVideos;
 
   return (
     <Stack direction={{ xs: "column", md: "row" }}>
@@ -29,22 +38,32 @@ const Feed = () => {
           p: 3,
         }}
       >
-        <Typography variant="h4" color="white" sx={{ mb: 3 }}>
-          🎬 Trending Videos
+        <Typography
+          variant="h4"
+          color="white"
+          sx={{ mb: 3, fontWeight: "bold" }}
+        >
+          {category ? `${category} Videos` : "🎬 Trending Videos"}
         </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 3,
-            justifyContent: "center",
-          }}
-        >
-          {allVideos.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </Box>
+        {filteredVideos.length === 0 ? (
+          <Typography color="gray">
+            No videos available in this category.
+          </Typography>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 3,
+              justifyContent: "center",
+            }}
+          >
+            {filteredVideos.map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </Box>
+        )}
       </Box>
     </Stack>
   );

@@ -8,14 +8,37 @@ const Footer = () => {
         borderTop: "1px solid #303030",
         textAlign: "center",
         py: 3,
+        mt: 5,
       }}
     >
-      <Typography variant="body2" color="#aaa">
-        © 2026 YouTube Clone
+      <Typography
+        variant="body1"
+        sx={{
+          color: "#fff",
+          fontWeight: "bold",
+        }}
+      >
+        YouTube Clone
       </Typography>
 
-      <Typography variant="body2" color="#666">
-        Built with React • Material UI • YouTube Data API
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#888",
+          mt: 1,
+        }}
+      >
+        Built with React • Material UI • React Router • ReactPlayer
+      </Typography>
+
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#666",
+          mt: 1,
+        }}
+      >
+        Created by Ann Mariya Biju © 2026
       </Typography>
     </Box>
   );

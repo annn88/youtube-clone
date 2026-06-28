@@ -5,6 +5,5 @@ export const categories = [
   { name: "News", icon: "📰" },
   { name: "Sports", icon: "🏆" },
   { name: "Coding", icon: "💻" },
-  { name: "Movies", icon: "🎬" },
   { name: "Education", icon: "📚" },
 ];
