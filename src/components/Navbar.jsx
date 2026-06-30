@@ -1,78 +1,96 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import {
   AppBar,
   Toolbar,
-  Typography,
   Box,
   TextField,
   IconButton,
   InputAdornment,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
 
+import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import MicIcon from "@mui/icons-material/Mic";
+import VideoCallOutlinedIcon from "@mui/icons-material/VideoCallOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const term = searchTerm.trim();
+    if (!searchTerm.trim()) return;
 
-    if (!term) return;
-
-    navigate(`/search/${term}`);
+    navigate(`/search/${searchTerm}`);
     setSearchTerm("");
   };
 
   return (
     <AppBar
       position="sticky"
+      elevation={0}
       sx={{
         backgroundColor: "#0f0f0f",
-        borderBottom: "1px solid #303030",
+        borderBottom: "1px solid #272727",
       }}
-      elevation={0}
     >
       <Toolbar
         sx={{
           display: "flex",
           justifyContent: "space-between",
           gap: 2,
+          minHeight: "64px",
+          px: { xs: 1, md: 3 },
         }}
       >
-        {/* Logo */}
-        <Link
-          to="/"
-          style={{
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: "bold",
-            }}
-          >
-            <span style={{ color: "#ff0000" }}>▶ YouTube</span>{" "}
-            <span style={{ color: "#ffffff" }}>Clone</span>
-          </Typography>
-        </Link>
-
-        {/* Search */}
+        {/* LEFT */}
         <Box
           sx={{
-            width: {
-              xs: "55%",
-              sm: "420px",
-            },
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            minWidth: "170px",
+          }}
+        >
+          <IconButton sx={{ color: "#fff" }}>
+            <MenuIcon />
+          </IconButton>
+
+          <Link
+            to="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              textDecoration: "none",
+            }}
+          >
+            <Box
+              component="img"
+              src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+              alt="YouTube"
+              sx={{
+                height: 24,
+              }}
+            />
+          </Link>
+        </Box>
+
+        {/* CENTER SEARCH */}
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            maxWidth: "700px",
           }}
         >
           <TextField
             fullWidth
-            size="small"
-            placeholder="Search videos..."
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => {
@@ -80,27 +98,99 @@ const Navbar = () => {
                 handleSearch();
               }
             }}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleSearch}
-                      color="error"
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
             sx={{
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#fff",
-                borderRadius: "30px",
+                height: 42,
+                borderRadius: "25px",
+                backgroundColor: "#121212",
+                color: "#fff",
+
+                "& fieldset": {
+                  borderColor: "#303030",
+                },
+
+                "&:hover fieldset": {
+                  borderColor: "#555",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#3ea6ff",
+                },
+              },
+
+              input: {
+                color: "#fff",
               },
             }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleSearch}
+                    sx={{
+                      bgcolor: "#222",
+                      borderRadius: "50%",
+                      color: "#fff",
+
+                      "&:hover": {
+                        bgcolor: "#333",
+                      },
+                    }}
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
+
+          <Tooltip title="Search with your voice">
+            <IconButton
+              sx={{
+                ml: 1,
+                bgcolor: "#222",
+                color: "#fff",
+
+                "&:hover": {
+                  bgcolor: "#333",
+                },
+              }}
+            >
+              <MicIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {/* RIGHT */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Tooltip title="Create">
+            <IconButton sx={{ color: "#fff" }}>
+              <VideoCallOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Notifications">
+            <IconButton sx={{ color: "#fff" }}>
+              <NotificationsNoneOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Avatar
+            sx={{
+              width: 34,
+              height: 34,
+              bgcolor: "#3ea6ff",
+              cursor: "pointer",
+            }}
+          >
+            A
+          </Avatar>
         </Box>
       </Toolbar>
     </AppBar>

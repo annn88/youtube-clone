@@ -5,10 +5,17 @@ import {
   Stack,
   Button,
   CircularProgress,
+  Avatar,
+  IconButton,
+  Paper,
 } from "@mui/material";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import ShareIcon from "@mui/icons-material/Share";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { useParams } from "react-router-dom";
 
-import VideoCard from "./VideoCard";
+import RelatedVideoCard from "./RelatedVideoCard";
 import { fetchFromAPI } from "../utils/fetchFromAPI";
 
 const VideoDetail = () => {
@@ -17,42 +24,45 @@ const VideoDetail = () => {
   const [videoDetail, setVideoDetail] = useState(null);
   const [relatedVideos, setRelatedVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
-  useEffect(() => {
-    setLoading(true);
 
-    fetchFromAPI(`videos?part=snippet,statistics&id=${id}`)
-      .then((data) => {
-        if (!data.items || data.items.length === 0) {
-          setLoading(false);
-          return;
-        }
+useEffect(() => {
+  setLoading(true);
 
-        const video = data.items[0];
-        setVideoDetail(video);
+  fetchFromAPI(`videos?part=snippet,statistics&id=${id}`)
+    .then((data) => {
+      if (!data.items || data.items.length === 0) {
+        setLoading(false);
+        return;
+      }
 
-        return fetchFromAPI(
-          `search?part=snippet&q=${encodeURIComponent(
-            video.snippet.title
-          )}&type=video&maxResults=10`
+      const video = data.items[0];
+      setVideoDetail(video);
+
+      
+      return fetchFromAPI(
+        `search?part=snippet&q=${encodeURIComponent(
+          video.snippet.title
+        )}&type=video&maxResults=10`
+      );
+    })
+    .then((data) => {
+      if (data) {
+        setRelatedVideos(
+          (data.items || []).filter(
+            (item) => item.id?.videoId !== id
+          )
         );
-      })
-      .then((data) => {
-        if (data) {
-          setRelatedVideos(
-            (data.items || []).filter(
-              (item) => item.id?.videoId !== id
-            )
-          );
-        }
+      }
 
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [id]);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
+}, [id]);
 
   if (loading) {
     return (
@@ -118,55 +128,150 @@ const VideoDetail = () => {
           />
         </Box>
 
-        <Typography
-          variant="h5"
-          mt={2}
-          fontWeight="bold"
-        >
-          {videoDetail.snippet.title}
-        </Typography>
+       <Typography
+  variant="h5"
+  sx={{
+    mt: 2,
+    fontWeight: 700,
+    color: "#fff",
+  }}
+>
+  {videoDetail.snippet.title}
+</Typography>
 
-        <Typography
-          color="gray"
-          mt={1}
-        >
-          {videoDetail.snippet.channelTitle}
-        </Typography>
+<Stack
+  direction={{ xs: "column", md: "row" }}
+  justifyContent="space-between"
+  alignItems={{ xs: "flex-start", md: "center" }}
+  spacing={2}
+  mt={3}
+>
+  <Stack direction="row" spacing={2} alignItems="center">
+    <Avatar
+      sx={{
+        width: 48,
+        height: 48,
+      }}
+    >
+      {videoDetail.snippet.channelTitle.charAt(0)}
+    </Avatar>
 
-        <Typography
-          color="gray"
-        >
-          {Number(
-            videoDetail.statistics?.viewCount || 0
-          ).toLocaleString()}{" "}
-          views
-        </Typography>
+    <Box>
+      <Typography fontWeight={600}>
+        {videoDetail.snippet.channelTitle}
+      </Typography>
 
-        <Typography
-          mt={2}
-          sx={{
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {videoDetail.snippet.description}
-        </Typography>
+      <Typography
+        sx={{
+          color: "#aaa",
+          fontSize: 14,
+        }}
+      >
+        Official Channel
+      </Typography>
+    </Box>
 
-        <Button
-          variant="contained"
-          color="error"
-          href={`https://www.youtube.com/watch?v=${id}`}
-          target="_blank"
-          sx={{
-            mt: 3,
-            borderRadius: "25px",
-            px: 4,
-          }}
-        >
-          ▶ Watch on YouTube
-        </Button>
+    <Button
+      variant="contained"
+      sx={{
+        bgcolor: "#fff",
+        color: "#000",
+        borderRadius: "20px",
+        textTransform: "none",
+        ml: 2,
+        px: 3,
+
+        "&:hover": {
+          bgcolor: "#ddd",
+        },
+      }}
+    >
+      Subscribe
+    </Button>
+  </Stack>
+
+  <Stack direction="row" spacing={1}>
+    <IconButton
+      sx={{
+        bgcolor: "#272727",
+        color: "#fff",
+      }}
+    >
+      <ThumbUpOffAltIcon />
+    </IconButton>
+
+    <IconButton
+      sx={{
+        bgcolor: "#272727",
+        color: "#fff",
+      }}
+    >
+      <ThumbDownOffAltIcon />
+    </IconButton>
+
+    <IconButton
+      sx={{
+        bgcolor: "#272727",
+        color: "#fff",
+      }}
+    >
+      <ShareIcon />
+    </IconButton>
+
+    <IconButton
+      sx={{
+        bgcolor: "#272727",
+        color: "#fff",
+      }}
+    >
+      <BookmarkBorderIcon />
+    </IconButton>
+  </Stack>
+</Stack>
+
+<Paper
+  elevation={0}
+  sx={{
+    mt: 3,
+    bgcolor: "#272727",
+    color: "#fff",
+    borderRadius: "14px",
+    p: 2,
+  }}
+>
+  <Typography fontWeight={600}>
+    {Number(
+      videoDetail.statistics?.viewCount || 0
+    ).toLocaleString()} views
+  </Typography>
+
+  <Typography
+    sx={{
+      mt: 1,
+      whiteSpace: "pre-wrap",
+    }}
+  >
+    {videoDetail.snippet.description}
+  </Typography>
+</Paper>
+
+<Button
+  variant="contained"
+  color="error"
+  href={`https://www.youtube.com/watch?v=${id}`}
+  target="_blank"
+  sx={{
+    mt: 3,
+    borderRadius: "25px",
+    px: 4,
+    textTransform: "none",
+  }}
+>
+  Watch on YouTube
+</Button>
       </Box>
 
-      {/* Related Videos */}
+            {/* Related Videos */}
       <Box flex={1}>
         <Typography
           variant="h6"
@@ -176,9 +281,9 @@ const VideoDetail = () => {
           Related Videos
         </Typography>
 
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           {relatedVideos.map((video) => (
-            <VideoCard
+            <RelatedVideoCard
               key={video.id?.videoId || video.id}
               video={video}
             />

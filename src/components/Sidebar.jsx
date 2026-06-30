@@ -1,71 +1,87 @@
-import { Stack, Button } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
-import { categories } from "../utils/constants";
+import { Stack, Typography } from "@mui/material";
+import { Link, useLocation } from "react-router-dom";
+
+import HomeIcon from "@mui/icons-material/Home";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import CodeIcon from "@mui/icons-material/Code";
+import SchoolIcon from "@mui/icons-material/School";
+
+const categories = [
+  { name: "Home", icon: <HomeIcon /> },
+  { name: "Music", icon: <MusicNoteIcon /> },
+  { name: "Gaming", icon: <SportsEsportsIcon /> },
+  { name: "News", icon: <NewspaperIcon /> },
+  { name: "Sports", icon: <EmojiEventsIcon /> },
+  { name: "Coding", icon: <CodeIcon /> },
+  { name: "Education", icon: <SchoolIcon /> },
+];
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+
+  const current =
+    location.pathname === "/"
+      ? "Home"
+      : decodeURIComponent(location.pathname.split("/").pop());
 
   return (
     <Stack
-      direction="column"
+      spacing={1}
       sx={{
-        backgroundColor: "#0f0f0f",
-        height: "100vh",
         p: 2,
-        overflowY: "auto",
+        position: "sticky",
+        top: "70px",
       }}
     >
       {categories.map((category) => {
-        const isActive =
-          location.pathname === "/" && category.name === "Home"
-            ? true
-            : location.pathname === `/category/${category.name}`;
+        const selected = current === category.name;
 
         return (
-          <Button
+          <Link
             key={category.name}
-            onClick={() =>
-              navigate(
-                category.name === "Home"
-                  ? "/"
-                  : `/category/${category.name}`
-              )
+            to={
+              category.name === "Home"
+                ? "/"
+                : `/category/${category.name}`
             }
-            sx={{
-              justifyContent: "flex-start",
-              color: "white",
-              textTransform: "none",
-              mb: 1,
-              py: 1.2,
-              px: 2,
-              borderRadius: "12px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: isActive
-                ? "#ff0000"
-                : "transparent",
-              transition: "0.3s",
-
-              "&:hover": {
-                backgroundColor: "#ff0000",
-                transform: "translateX(5px)",
-              },
+            style={{
+              textDecoration: "none",
             }}
           >
-            <span
-              style={{
-                marginRight: "15px",
-                fontSize: "22px",
-                display: "flex",
-                alignItems: "center",
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              sx={{
+                px: 2,
+                py: 1.5,
+                borderRadius: "12px",
+                transition: "0.3s",
+                backgroundColor: selected
+                  ? "#272727"
+                  : "transparent",
+                color: "#fff",
+
+                "&:hover": {
+                  backgroundColor: "#272727",
+                },
               }}
             >
               {category.icon}
-            </span>
 
-            {category.name}
-          </Button>
+              <Typography
+                sx={{
+                  fontSize: "15px",
+                  fontWeight: selected ? 600 : 400,
+                }}
+              >
+                {category.name}
+              </Typography>
+            </Stack>
+          </Link>
         );
       })}
     </Stack>

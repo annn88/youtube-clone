@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
-  Stack,
   Typography,
   CircularProgress,
 } from "@mui/material";
@@ -20,56 +19,42 @@ const Feed = () => {
   useEffect(() => {
     setLoading(true);
 
-    // Home Page - Trending Videos
-    if (!category || category === "Home") {
-      fetchFromAPI(
-        "videos?part=snippet,statistics&chart=mostPopular&regionCode=IN&maxResults=20"
-      )
-        .then((data) => {
-          setVideos(data.items || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
-    }
+    const query =
+      category && category !== "Home"
+        ? category
+        : "Trending";
 
-    // Categories
-    else {
-      const categoryQueries = {
-        Music: "music",
-        Gaming: "gaming",
-        News: "news",
-        Sports: "sports",
-        Coding: "programming",
-        Education: "education",
-      };
-
-      const query = categoryQueries[category] || category;
-
-      fetchFromAPI(
-        `search?part=snippet&q=${query}&type=video&maxResults=20`
-      )
-        .then((data) => {
-          setVideos(data.items || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
-    }
+    fetchFromAPI(
+      `search?part=snippet&q=${query}&type=video&maxResults=24`
+    )
+      .then((data) => {
+        setVideos(data.items || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, [category]);
 
   return (
-    <Stack direction={{ xs: "column", md: "row" }}>
+    <Box
+      sx={{
+        display: "flex",
+        backgroundColor: "#0f0f0f",
+        minHeight: "100vh",
+      }}
+    >
       {/* Sidebar */}
       <Box
         sx={{
-          width: { xs: "100%", md: "240px" },
-          borderRight: "1px solid #3d3d3d",
-          backgroundColor: "#000",
+          width: {
+            xs: 80,
+            md: 240,
+          },
+          flexShrink: 0,
+          borderRight: "1px solid #272727",
+          backgroundColor: "#0f0f0f",
         }}
       >
         <Sidebar />
@@ -79,22 +64,21 @@ const Feed = () => {
       <Box
         sx={{
           flex: 1,
-          backgroundColor: "#121212",
-          minHeight: "90vh",
-          p: 3,
+          p: {
+            xs: 2,
+            md: 3,
+          },
         }}
       >
         <Typography
-          variant="h4"
-          color="white"
+          variant="h5"
           sx={{
-            mb: 3,
+            color: "#fff",
             fontWeight: "bold",
+            mb: 3,
           }}
         >
-          {category && category !== "Home"
-            ? `${category} Videos`
-            : "🔥 Trending Videos"}
+          {category ? category : "Trending"}
         </Typography>
 
         {loading ? (
@@ -102,37 +86,35 @@ const Feed = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mt: 10,
+              mt: 8,
             }}
           >
             <CircularProgress color="error" />
           </Box>
-        ) : videos.length === 0 ? (
-          <Typography
-            color="gray"
-            align="center"
-          >
-            No videos found.
-          </Typography>
         ) : (
           <Box
             sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
+              display: "grid",
               gap: 3,
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,1fr)",
+                md: "repeat(3,1fr)",
+                lg: "repeat(4,1fr)",
+              },
             }}
           >
             {videos.map((video) => (
               <VideoCard
-                key={video.id.videoId || video.id}
+                key={video.id?.videoId || video.id}
                 video={video}
               />
             ))}
           </Box>
         )}
       </Box>
-    </Stack>
+    </Box>
   );
 };
 
