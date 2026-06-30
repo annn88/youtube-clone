@@ -41,7 +41,7 @@ const Navbar = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          gap: 2,
+          gap: 1,
           minHeight: "64px",
           px: { xs: 1, md: 3 },
         }}
@@ -52,7 +52,7 @@ const Navbar = () => {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            minWidth: "170px",
+            minWidth: { xs: "auto", md: "170px" },
           }}
         >
           <IconButton sx={{ color: "#fff" }}>
@@ -72,7 +72,7 @@ const Navbar = () => {
               src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
               alt="YouTube"
               sx={{
-                height: 24,
+                height: { xs: 20, md: 24 },
               }}
             />
           </Link>
@@ -83,9 +83,9 @@ const Navbar = () => {
           sx={{
             flex: 1,
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            maxWidth: "700px",
+            mx: 1,
+            maxWidth: { xs: "100%", md: "700px" },
           }}
         >
           <TextField
@@ -129,9 +129,7 @@ const Navbar = () => {
                     onClick={handleSearch}
                     sx={{
                       bgcolor: "#222",
-                      borderRadius: "50%",
                       color: "#fff",
-
                       "&:hover": {
                         bgcolor: "#333",
                       },
@@ -144,21 +142,22 @@ const Navbar = () => {
             }}
           />
 
-          <Tooltip title="Search with your voice">
-            <IconButton
-              sx={{
-                ml: 1,
-                bgcolor: "#222",
-                color: "#fff",
-
-                "&:hover": {
-                  bgcolor: "#333",
-                },
-              }}
-            >
-              <MicIcon />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Tooltip title="Search with your voice">
+              <IconButton
+                sx={{
+                  ml: 1,
+                  bgcolor: "#222",
+                  color: "#fff",
+                  "&:hover": {
+                    bgcolor: "#333",
+                  },
+                }}
+              >
+                <MicIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
 
         {/* RIGHT */}
@@ -166,20 +165,24 @@ const Navbar = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            gap: 0.5,
           }}
         >
-          <Tooltip title="Create">
-            <IconButton sx={{ color: "#fff" }}>
-              <VideoCallOutlinedIcon />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Tooltip title="Create">
+              <IconButton sx={{ color: "#fff" }}>
+                <VideoCallOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
 
-          <Tooltip title="Notifications">
-            <IconButton sx={{ color: "#fff" }}>
-              <NotificationsNoneOutlinedIcon />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Tooltip title="Notifications">
+              <IconButton sx={{ color: "#fff" }}>
+                <NotificationsNoneOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
 
           <Avatar
             sx={{

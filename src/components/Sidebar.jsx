@@ -31,7 +31,7 @@ const Sidebar = () => {
     <Stack
       spacing={1}
       sx={{
-        p: 2,
+        p: 1,
         position: "sticky",
         top: "70px",
       }}
@@ -42,14 +42,8 @@ const Sidebar = () => {
         return (
           <Link
             key={category.name}
-            to={
-              category.name === "Home"
-                ? "/"
-                : `/category/${category.name}`
-            }
-            style={{
-              textDecoration: "none",
-            }}
+            to={category.name === "Home" ? "/" : `/category/${category.name}`}
+            style={{ textDecoration: "none" }}
           >
             <Stack
               direction="row"
@@ -59,11 +53,9 @@ const Sidebar = () => {
                 px: 2,
                 py: 1.5,
                 borderRadius: "12px",
-                transition: "0.3s",
-                backgroundColor: selected
-                  ? "#272727"
-                  : "transparent",
+                backgroundColor: selected ? "#272727" : "transparent",
                 color: "#fff",
+                transition: "0.3s",
 
                 "&:hover": {
                   backgroundColor: "#272727",
@@ -74,6 +66,10 @@ const Sidebar = () => {
 
               <Typography
                 sx={{
+                  display: {
+                    xs: "none", // Hide text on phones
+                    md: "block", // Show on tablets/desktops
+                  },
                   fontSize: "15px",
                   fontWeight: selected ? 600 : 400,
                 }}
