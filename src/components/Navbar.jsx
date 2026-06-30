@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import {
   AppBar,
   Toolbar,
@@ -7,29 +10,30 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
+
 import SearchIcon from "@mui/icons-material/Search";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    if (searchTerm.trim()) {
-      navigate(`/search/${searchTerm}`);
-      setSearchTerm("");
-    }
+    const term = searchTerm.trim();
+
+    if (!term) return;
+
+    navigate(`/search/${term}`);
+    setSearchTerm("");
   };
 
   return (
     <AppBar
       position="sticky"
-      elevation={1}
       sx={{
         backgroundColor: "#0f0f0f",
         borderBottom: "1px solid #303030",
       }}
+      elevation={0}
     >
       <Toolbar
         sx={{
@@ -39,25 +43,24 @@ const Navbar = () => {
         }}
       >
         {/* Logo */}
-       <Link
-  to="/"
-  style={{
-    textDecoration: "none",
-  }}
->
-  <Typography
-    variant="h5"
-    sx={{
-      fontWeight: "bold",
-      letterSpacing: "0.5px",
-    }}
-  >
-    <span style={{ color: "#ff0000" }}>▶ YouTube</span>{" "}
-    <span style={{ color: "#ffffff" }}>Clone</span>
-  </Typography>
-</Link>
+        <Link
+          to="/"
+          style={{
+            textDecoration: "none",
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            <span style={{ color: "#ff0000" }}>▶ YouTube</span>{" "}
+            <span style={{ color: "#ffffff" }}>Clone</span>
+          </Typography>
+        </Link>
 
-        {/* Search Bar */}
+        {/* Search */}
         <Box
           sx={{
             width: {
@@ -77,23 +80,25 @@ const Navbar = () => {
                 handleSearch();
               }
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "30px",
-                backgroundColor: "#fff",
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleSearch}
+                      color="error"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               },
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleSearch}
-                    color="error"
-                  >
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#fff",
+                borderRadius: "30px",
+              },
             }}
           />
         </Box>

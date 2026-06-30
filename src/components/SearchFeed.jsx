@@ -1,17 +1,23 @@
+import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { videos } from "../utils/videos";
+import { fetchFromAPI } from "../utils/fetchFromAPI";
 import VideoCard from "./VideoCard";
 
 const SearchFeed = () => {
   const { searchTerm } = useParams();
 
-  const filteredVideos = videos.filter(
-    (video) =>
-      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.channel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    fetchFromAPI(
+      `search?part=snippet&q=${searchTerm}&type=video&maxResults=20`
+    )
+      .then((data) => {
+        setVideos(data.items || []);
+      })
+      .catch((err) => console.error(err));
+  }, [searchTerm]);
 
   return (
     <Box
@@ -29,7 +35,7 @@ const SearchFeed = () => {
         Search Results for "{searchTerm}"
       </Typography>
 
-      {filteredVideos.length === 0 ? (
+      {videos.length === 0 ? (
         <Typography color="gray">
           No videos found.
         </Typography>
@@ -42,9 +48,9 @@ const SearchFeed = () => {
             justifyContent: "center",
           }}
         >
-          {filteredVideos.map((video) => (
+          {videos.map((video) => (
             <VideoCard
-              key={video.id}
+              key={video.id.videoId}
               video={video}
             />
           ))}

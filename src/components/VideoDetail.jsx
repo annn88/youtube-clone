@@ -1,25 +1,84 @@
-import { Box, Typography, Stack, Button } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import ReactPlayer from "react-player";
-import { videos } from "../utils/videos";
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Stack,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { useParams } from "react-router-dom";
+
+import VideoCard from "./VideoCard";
+import { fetchFromAPI } from "../utils/fetchFromAPI";
 
 const VideoDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
-  const video = videos.find((v) => v.id === id);
+  const [videoDetail, setVideoDetail] = useState(null);
+  const [relatedVideos, setRelatedVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!video) {
+  useEffect(() => {
+    setLoading(true);
+
+    fetchFromAPI(`videos?part=snippet,statistics&id=${id}`)
+      .then((data) => {
+        if (!data.items || data.items.length === 0) {
+          setLoading(false);
+          return;
+        }
+
+        const video = data.items[0];
+        setVideoDetail(video);
+
+        return fetchFromAPI(
+          `search?part=snippet&q=${encodeURIComponent(
+            video.snippet.title
+          )}&type=video&maxResults=10`
+        );
+      })
+      .then((data) => {
+        if (data) {
+          setRelatedVideos(
+            (data.items || []).filter(
+              (item) => item.id?.videoId !== id
+            )
+          );
+        }
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
     return (
-      <Typography color="white" textAlign="center" mt={5}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 8,
+        }}
+      >
+        <CircularProgress color="error" />
+      </Box>
+    );
+  }
+
+  if (!videoDetail) {
+    return (
+      <Typography
+        color="white"
+        textAlign="center"
+        mt={5}
+      >
         Video not found.
       </Typography>
     );
   }
-
-  const relatedVideos = videos.filter(
-    (v) => v.category === video.category && v.id !== video.id
-  );
 
   return (
     <Stack
@@ -36,15 +95,26 @@ const VideoDetail = () => {
       <Box flex={3}>
         <Box
           sx={{
-            borderRadius: "15px",
+            position: "relative",
+            width: "100%",
+            paddingTop: "56.25%",
+            borderRadius: "12px",
             overflow: "hidden",
           }}
         >
-          <ReactPlayer
-            src={`https://www.youtube.com/watch?v=${video.videoId}`}
-            controls
-            width="100%"
-            height="500px"
+          <iframe
+            src={`https://www.youtube.com/embed/${id}`}
+            title="YouTube Player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              border: "none",
+            }}
           />
         </Box>
 
@@ -53,25 +123,38 @@ const VideoDetail = () => {
           mt={2}
           fontWeight="bold"
         >
-          {video.title}
+          {videoDetail.snippet.title}
         </Typography>
 
-        <Typography color="gray" mt={1}>
-          {video.channel}
+        <Typography
+          color="gray"
+          mt={1}
+        >
+          {videoDetail.snippet.channelTitle}
         </Typography>
 
-        <Typography color="gray">
-          {video.views} • {video.uploaded}
+        <Typography
+          color="gray"
+        >
+          {Number(
+            videoDetail.statistics?.viewCount || 0
+          ).toLocaleString()}{" "}
+          views
         </Typography>
 
-        <Typography mt={2}>
-          {video.description}
+        <Typography
+          mt={2}
+          sx={{
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {videoDetail.snippet.description}
         </Typography>
 
         <Button
           variant="contained"
           color="error"
-          href={`https://www.youtube.com/watch?v=${video.videoId}`}
+          href={`https://www.youtube.com/watch?v=${id}`}
           target="_blank"
           sx={{
             mt: 3,
@@ -84,82 +167,23 @@ const VideoDetail = () => {
       </Box>
 
       {/* Related Videos */}
-      <Box
-        flex={1}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
+      <Box flex={1}>
         <Typography
           variant="h6"
           fontWeight="bold"
+          mb={2}
         >
           Related Videos
         </Typography>
 
-        {relatedVideos.map((item) => (
-          <Box
-            key={item.id}
-            onClick={() => navigate(`/video/${item.id}`)}
-            sx={{
-              display: "flex",
-              gap: 2,
-              cursor: "pointer",
-              backgroundColor: "#1e1e1e",
-              borderRadius: "10px",
-              p: 1,
-              transition: "0.3s",
-              "&:hover": {
-                backgroundColor: "#2b2b2b",
-              },
-            }}
-          >
-            <img
-              src={item.thumbnail}
-              alt={item.title}
-              style={{
-                width: "170px",
-                height: "95px",
-                borderRadius: "8px",
-                objectFit: "cover",
-              }}
+        <Stack spacing={2}>
+          {relatedVideos.map((video) => (
+            <VideoCard
+              key={video.id?.videoId || video.id}
+              video={video}
             />
-
-            <Box>
-              <Typography
-                sx={{
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontSize: "15px",
-                }}
-              >
-                {item.title}
-              </Typography>
-
-              <Typography
-                sx={{
-                  color: "#aaa",
-                  fontSize: "13px",
-                  mt: 0.5,
-                }}
-              >
-                {item.channel}
-              </Typography>
-
-              <Typography
-                sx={{
-                  color: "#777",
-                  fontSize: "12px",
-                  mt: 0.5,
-                }}
-              >
-                {item.views}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
+          ))}
+        </Stack>
       </Box>
     </Stack>
   );

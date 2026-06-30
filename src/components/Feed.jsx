@@ -1,20 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
 import Sidebar from "./Sidebar";
 import VideoCard from "./VideoCard";
-import { videos } from "../utils/videos";
+import { fetchFromAPI } from "../utils/fetchFromAPI";
 
 const Feed = () => {
   const { category } = useParams();
 
-  const [allVideos] = useState(videos);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredVideos =
-    category && category !== "Home"
-      ? allVideos.filter((video) => video.category === category)
-      : allVideos;
+  useEffect(() => {
+    setLoading(true);
+
+    // Home Page - Trending Videos
+    if (!category || category === "Home") {
+      fetchFromAPI(
+        "videos?part=snippet,statistics&chart=mostPopular&regionCode=IN&maxResults=20"
+      )
+        .then((data) => {
+          setVideos(data.items || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+
+    // Categories
+    else {
+      const categoryQueries = {
+        Music: "music",
+        Gaming: "gaming",
+        News: "news",
+        Sports: "sports",
+        Coding: "programming",
+        Education: "education",
+      };
+
+      const query = categoryQueries[category] || category;
+
+      fetchFromAPI(
+        `search?part=snippet&q=${query}&type=video&maxResults=20`
+      )
+        .then((data) => {
+          setVideos(data.items || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [category]);
 
   return (
     <Stack direction={{ xs: "column", md: "row" }}>
@@ -41,26 +87,47 @@ const Feed = () => {
         <Typography
           variant="h4"
           color="white"
-          sx={{ mb: 3, fontWeight: "bold" }}
+          sx={{
+            mb: 3,
+            fontWeight: "bold",
+          }}
         >
-          {category ? `${category} Videos` : "🎬 Trending Videos"}
+          {category && category !== "Home"
+            ? `${category} Videos`
+            : "🔥 Trending Videos"}
         </Typography>
 
-        {filteredVideos.length === 0 ? (
-          <Typography color="gray">
-            No videos available in this category.
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: 10,
+            }}
+          >
+            <CircularProgress color="error" />
+          </Box>
+        ) : videos.length === 0 ? (
+          <Typography
+            color="gray"
+            align="center"
+          >
+            No videos found.
           </Typography>
         ) : (
           <Box
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              gap: 3,
               justifyContent: "center",
+              gap: 3,
             }}
           >
-            {filteredVideos.map((video) => (
-              <VideoCard key={video.id} video={video} />
+            {videos.map((video) => (
+              <VideoCard
+                key={video.id.videoId || video.id}
+                video={video}
+              />
             ))}
           </Box>
         )}

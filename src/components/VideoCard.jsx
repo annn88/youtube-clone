@@ -3,15 +3,17 @@ import {
   CardMedia,
   CardContent,
   Typography,
-  Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const VideoCard = ({ video }) => {
+  // Works for BOTH endpoints
+  const videoId = video.id?.videoId || video.id;
+
   return (
     <Card
       component={Link}
-      to={`/video/${video.id}`}
+      to={`/video/${videoId}`}
       sx={{
         width: { xs: "100%", sm: "340px" },
         backgroundColor: "#181818",
@@ -19,70 +21,49 @@ const VideoCard = ({ video }) => {
         textDecoration: "none",
         borderRadius: "16px",
         overflow: "hidden",
-        transition: "all 0.3s ease",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+        transition: "0.3s",
 
         "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 10px 20px rgba(0,0,0,0.6)",
+          transform: "translateY(-5px)",
         },
       }}
     >
       <CardMedia
         component="img"
-        image={video.thumbnail}
-        alt={video.title}
-        sx={{
-          height: 200,
-          objectFit: "cover",
-        }}
+        height="200"
+        image={
+          video.snippet?.thumbnails?.high?.url ||
+          video.snippet?.thumbnails?.medium?.url
+        }
+        alt={video.snippet?.title}
       />
 
-      <CardContent sx={{ p: 2 }}>
+      <CardContent>
         <Typography
           variant="subtitle1"
           sx={{
-            fontWeight: "bold",
             color: "#fff",
-            lineHeight: 1.4,
-            mb: 1,
+            fontWeight: "bold",
           }}
         >
-          {video.title}
+          {video.snippet?.title}
         </Typography>
 
         <Typography
           variant="body2"
-          sx={{
-            color: "#aaa",
-            mb: 0.5,
-          }}
+          color="gray"
         >
-          {video.channel}
+          {video.snippet?.channelTitle}
         </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            color: "#777",
-            fontSize: "13px",
-          }}
+        <Typography
+          variant="caption"
+          color="gray"
         >
-          <Typography
-            variant="caption"
-            sx={{ color: "#777" }}
-          >
-            {video.views}
-          </Typography>
-
-          <Typography
-            variant="caption"
-            sx={{ color: "#777" }}
-          >
-            {video.uploaded}
-          </Typography>
-        </Box>
+          {new Date(
+            video.snippet?.publishedAt
+          ).toLocaleDateString()}
+        </Typography>
       </CardContent>
     </Card>
   );
