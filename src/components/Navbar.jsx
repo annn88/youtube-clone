@@ -6,7 +6,6 @@ import {
   Box,
   TextField,
   IconButton,
-  InputAdornment,
   Avatar,
   Tooltip,
 } from "@mui/material";
@@ -41,7 +40,6 @@ const Navbar = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          gap: 1,
           minHeight: "64px",
           px: { xs: 1, md: 3 },
         }}
@@ -52,7 +50,7 @@ const Navbar = () => {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            minWidth: { xs: "auto", md: "170px" },
+            minWidth: { md: 170 },
           }}
         >
           <IconButton sx={{ color: "#fff" }}>
@@ -78,85 +76,94 @@ const Navbar = () => {
           </Link>
         </Box>
 
-        {/* CENTER SEARCH */}
+        {/* CENTER */}
         <Box
           sx={{
             flex: 1,
             display: "flex",
+            justifyContent: "center",
             alignItems: "center",
-            mx: 1,
-            maxWidth: { xs: "100%", md: "700px" },
+            mx: 2,
           }}
         >
-          <TextField
-            fullWidth
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-              }
-            }}
+          <Box
             sx={{
-              "& .MuiOutlinedInput-root": {
-                height: 42,
-                borderRadius: "25px",
-                backgroundColor: "#121212",
-                color: "#fff",
-
-                "& fieldset": {
-                  borderColor: "#303030",
-                },
-
-                "&:hover fieldset": {
-                  borderColor: "#555",
-                },
-
-                "&.Mui-focused fieldset": {
-                  borderColor: "#3ea6ff",
-                },
-              },
-
-              input: {
-                color: "#fff",
-              },
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              maxWidth: 650,
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleSearch}
-                    sx={{
-                      bgcolor: "#222",
-                      color: "#fff",
-                      "&:hover": {
-                        bgcolor: "#333",
-                      },
-                    }}
-                  >
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+          >
+            <TextField
+              fullWidth
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  height: 42,
+                  borderRadius: "25px 0 0 25px",
+                  backgroundColor: "#121212",
+                  color: "#fff",
 
-          <Box sx={{ display: { xs: "none", md: "block" } }}>
-            <Tooltip title="Search with your voice">
+                  "& fieldset": {
+                    borderColor: "#303030",
+                  },
+
+                  "&:hover fieldset": {
+                    borderColor: "#555",
+                  },
+
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#3ea6ff",
+                  },
+                },
+
+                input: {
+                  color: "#fff",
+                },
+              }}
+            />
+
+            <Tooltip title="Search">
               <IconButton
+                onClick={handleSearch}
                 sx={{
-                  ml: 1,
+                  width: 64,
+                  height: 42,
+                  borderRadius: "0 25px 25px 0",
                   bgcolor: "#222",
+                  border: "1px solid #303030",
+                  borderLeft: "none",
                   color: "#fff",
                   "&:hover": {
                     bgcolor: "#333",
                   },
                 }}
               >
-                <MicIcon />
+                <SearchIcon />
               </IconButton>
             </Tooltip>
+
+            <Box sx={{ display: { xs: "none", md: "block" } }}>
+              <Tooltip title="Search with your voice">
+                <IconButton
+                  sx={{
+                    ml: 1,
+                    bgcolor: "#222",
+                    color: "#fff",
+                    "&:hover": {
+                      bgcolor: "#333",
+                    },
+                  }}
+                >
+                  <MicIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
         </Box>
 

@@ -65,17 +65,17 @@ const Sidebar = () => {
               {category.icon}
 
               <Typography
-                sx={{
-                  display: {
-                    xs: "none", // Hide text on phones
-                    md: "block", // Show on tablets/desktops
-                  },
-                  fontSize: "15px",
-                  fontWeight: selected ? 600 : 400,
-                }}
-              >
-                {category.name}
-              </Typography>
+  sx={{
+    display: {
+      xs: "none",
+      md: "block",
+    },
+    fontSize: "15px",
+    fontWeight: selected ? 600 : 400,
+  }}
+>
+  {category.name}
+</Typography>
             </Stack>
           </Link>
         );

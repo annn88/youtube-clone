@@ -49,9 +49,9 @@ const Feed = () => {
       <Box
         sx={{
           width: {
-            xs: 80,
-            md: 240,
-          },
+           xs: 70,
+          md: 240,
+         },
           flexShrink: 0,
           borderRight: "1px solid #272727",
           backgroundColor: "#0f0f0f",
